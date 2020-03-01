@@ -35,6 +35,16 @@ class Query(object):
         :param kwargs: dict of search query parameters to determine which SearchOperation query to use
         """
         # TODO: What instance variables will be useful for storing on the Query object?
+        self.number = kwargs.get("number", None)
+        self.date = kwargs.get("date", None)
+        self.start_date = kwargs.get("start_date", None)
+        self.end_date = kwargs.get("end_date", None)
+
+        self.return_object = kwargs.get("return_object", None)
+        self.filters = kwargs.get("return_object", None)
+
+        if self.filters:
+            self.filters = [filter.split(":") for filter in self.filters]
 
     def build_query(self):
         """

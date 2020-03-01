@@ -38,15 +38,16 @@ class NEODatabase(object):
         # TODO: Load data from csv file.
         # TODO: Where will the data be stored?
         with open(filename, "r") as f:
+            # store all lines except header
             features = [feature.split(",") for feature in f.readlines()[1:]]
 
             for feature in features:
                 # Get relevant NEO information
                 # Mapped names to feature indices for readability
-                id, name, diameter, ishazardous, orbit_date, miss_distance = (
+                id, name, diameter_min_km, ishazardous, orbit_date, miss_distance = (
                     feature[0],
                     feature[2][1:-1],
-                    feature[6],
+                    feature[5],
                     feature[13],
                     feature[17],
                     feature[21]
@@ -54,9 +55,9 @@ class NEODatabase(object):
 
                 # Set orbit data
                 orbit_data = {
-                    "name": name,
-                    "orbit_date": orbit_date,
-                    "miss_distance": miss_distance
+                    "neo_name": name,
+                    "close_approach_date": orbit_date,
+                    "miss_distance_kilometers": miss_distance
                 }
 
                 # Initialize Orbit
@@ -66,8 +67,8 @@ class NEODatabase(object):
                 neo_data = {
                     "id": id,
                     "name": name,
-                    "diameter": diameter,
-                    "ishazardous": ishazardous,
+                    "diameter_min_km": diameter_min_km,
+                    "is_potentially_hazardous_asteroid": ishazardous,
                     "orbits": set([orbit])
                 }
 

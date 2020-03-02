@@ -1,5 +1,5 @@
 from operator import eq, gt
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from enum import Enum
 
 from exceptions import UnsupportedFeature
@@ -42,7 +42,7 @@ class Query(object):
         self.end_date = kwargs.get("end_date", None)
 
         self.return_object = kwargs.get("return_object", None)
-        self.filters = kwargs.get("return_object", None)
+        self.filters = kwargs.get("filter", None)
         
 		# If there is one or more filters,
         # split filter in attribute, operator, and value
@@ -75,7 +75,7 @@ class Query(object):
                     option, operation, value = filter_option
                     filters.append(Filter(option, key, operation, value))
 
-		return Query.Selectors(datesearch, self.number, filters, return_object)
+        return Query.Selectors(datesearch, self.number, filters, return_object)
 
 class Filter(object):
     """
@@ -135,8 +135,8 @@ class Filter(object):
         :param results: List of Near Earth Object results
         :return: filtered list of Near Earth Object results
         """
-        # TODO: Takes a list of NearEarthObjects and applies the value of its filter operation to the results
 
+        # TODO: Takes a list of NearEarthObjects and applies the value of its filter operation to the results
         operation = Filter.Operators.get(self.operation)
         field = Filter.Options.get(self.field)
         outputs = []
@@ -162,6 +162,13 @@ class NEOSearcher(object):
         """
         self.db = db
         # TODO: What kind of an instance variable can we use to connect DateSearch to how we do search?
+        self.neos = self.db.neos
+        self.datepaths = self.db.datepaths
+        self.orbits = set()
+
+        for neo_name in self.db.neos:
+            for orbit in self.db.neos.get(neo_name).orbits:
+                self.orbits.add(orbit)
 
     def get_objects(self, query):
         """

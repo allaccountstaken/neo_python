@@ -66,6 +66,7 @@ class Query(object):
 
         return_object = Query.ReturnObjects.get(self.return_object)
 
+        filter_dict = set()
         if self.filters:
             filter_dict = Filter.create_filter_options(self.filters)
 

@@ -66,16 +66,10 @@ class Query(object):
 
         return_object = Query.ReturnObjects.get(self.return_object)
 
-        filters = []
-
         if self.filters:
-            filter_options = Filter.create_filter_options(self.filters)
-            for key in filter_options:
-                for filter_option in filter_options.get(key):
-                    option, operation, value = filter_option
-                    filters.append(Filter(option, key, operation, value))
+            filter_dict = Filter.create_filter_options(self.filters)
 
-        return Query.Selectors(datesearch, self.number, filters, return_object)
+        return Query.Selectors(datesearch, self.number, filter_dict, return_object)
 
 class Filter(object):
     """
@@ -120,11 +114,14 @@ class Filter(object):
         filter_dict = defaultdict(list)
 
         for filter_option in filter_options:
-            filter_name = filter_option[0]
+            filter_name, operation, value = filter_option
+            
             if filter_name in ('is_hazardous', 'diameter'):
-                filter_dict['NearEarthObject'].append(filter_option)
+                filter = Filter(filter_name, 'NearEarthObject', operation, value)
+                filter_dict['NearEarthObject'].append(filter)
             elif filter_name == 'distance':
-                filter_dict['OrbitPath'].append(filter_option)
+                filter = Filter(filter_name, 'OrbitPath', operation, value)
+                filter_dict['OrbitPath'].append(filter)
 
         return filter_dict
 
@@ -142,9 +139,22 @@ class Filter(object):
         outputs = []
 
         for neo in results:
-            val = getattr(neo, field)
+            value = getattr(neo, field)
             if operation(value, self.value):
                 outputs.append(neo)
+
+        return outputs
+
+    def apply_orbits_neo(self, orbits):
+        operation = Filter.Operators.get(self.operation)
+        field = Filter.Options.get(self.field)
+        outputs = set()
+
+        for orbit in orbits:
+            neo = self.neos(orbit.neo_name)
+            value = getattr(neo, field)
+            if operation(value, self.value):
+                outputs.add(orbit)
 
         return outputs
 
@@ -162,6 +172,7 @@ class NEOSearcher(object):
         """
         self.db = db
         # TODO: What kind of an instance variable can we use to connect DateSearch to how we do search?
+        self.date_search = None
         self.neos = self.db.neos
         self.datepaths = self.db.datepaths
         self.orbits = set()
@@ -185,3 +196,41 @@ class NEOSearcher(object):
         # TODO: Write instance methods that get_objects can use to implement the two types of DateSearch your project
         # TODO: needs to support that then your filters can be applied to. Remember to return the number specified in
         # TODO: the Query.Selectors as well as in the return_type from Query.Selectors
+
+        query_date = query.date_search.values
+        number = int(query.number)
+
+        if query.date_search.type == DateSearch.equals:
+            orbits = self.equal_to_date([query.date_search.values], DateSearch.equals.value)
+        elif query.date_search.type == DateSearch.between:
+            orbits = self.between_dates(query.date_search.values, DateSearch.between.value)
+
+        if query.filters.get('OrbitPath'):
+            for f in filter.get('OrbitPath'):
+                orbits = f.apply(orbits)
+		
+        if query.filters.get('NearEarthObject'):
+            for f in filter.get('NearEarthObject'):
+                orbits = f.apply_orbits_neo(orbits)
+
+        if query.return_object == 'NearEarthObject':
+            neos = [self.neos.get(orbit.neo_name) for orbit in orbits]
+            return neos[:number]
+        elif query.return_object == 'OrbitPath':
+            return list(orbits)[:number]
+
+    def equal_to_date(self, date_, number):
+        orbits = set()
+        for orbit in self.orbits:
+            if orbit.close_approach_date==date_:
+                orbits.add(orbit)
+
+        return orbits
+
+    def between_dates(self, dates, number):
+        orbits = set()
+        for orbit in self.orbits:
+            if orbit.close_approach_date>=dates[0] and orbit.close_approach_date<=dates[1]:
+                orbits.add(orbit)
+
+        return orbits

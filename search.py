@@ -1,3 +1,4 @@
+from operator import eq, gt
 from collections import namedtuple
 from enum import Enum
 
@@ -42,7 +43,9 @@ class Query(object):
 
         self.return_object = kwargs.get("return_object", None)
         self.filters = kwargs.get("return_object", None)
-
+        
+		# If there is one or more filters,
+        # split filter in attribute, operator, and value
         if self.filters:
             self.filters = [filter.split(":") for filter in self.filters]
 
@@ -55,7 +58,24 @@ class Query(object):
         """
 
         # TODO: Translate the query parameters into a QueryBuild.Selectors object
+        # Assess type of date search by the presence or absence of end_date attribute
+        if self.end_date:
+            datesearch = Query.DateSearch(DateSearch.between, [self.start_date, self.end_date])
+        else:
+            datesearch = Query.DateSearch(DateSearch.equals, [self.date])
 
+        return_object = Query.ReturnObjects.get(self.return_object)
+
+		filters = []
+
+        if self.filters:
+            filter_options = Filter.create_filter_options(self.filters)
+            for key in filter_options:
+                for filter_option in filter_options.get(key):
+                    option, operation, value = filter_option
+                    filters.append(Filter(option, key, operation, value))
+
+		return Query.Selectors(datesearch, self.number, filters, return_object)
 
 class Filter(object):
     """
@@ -64,10 +84,15 @@ class Filter(object):
     """
     Options = {
         # TODO: Create a dict of filter name to the NearEarthObject or OrbitalPath property
+        'is_hazardous': 'is_potentially_hazardous_asteroid',
+        'diameter': 'diameter_min_km',
+        'distance': 'miss_distance_kilometers'
     }
 
     Operators = {
         # TODO: Create a dict of operator symbol to an Operators method, see README Task 3 for hint
+        '=': eq, 
+        '>': gt
     }
 
     def __init__(self, field, object, operation, value):
@@ -92,6 +117,16 @@ class Filter(object):
         """
 
         # TODO: return a defaultdict of filters with key of NearEarthObject or OrbitPath and value of empty list or list of Filters
+        filter_dict = defaultdict(list)
+
+        for filter_option in filter_options:
+            filter_name = filter_option[0]
+            if filter_name in ('is_hazardous', 'diameter'):
+                filter_dict['NearEarthObject'].append(filter_option)
+            elif filter_name == 'distance':
+                filter_dict['OrbitPath'].append(filter_option)
+
+        return filter_dict
 
     def apply(self, results):
         """
@@ -101,7 +136,8 @@ class Filter(object):
         :return: filtered list of Near Earth Object results
         """
         # TODO: Takes a list of NearEarthObjects and applies the value of its filter operation to the results
-
+        
+        
 
 class NEOSearcher(object):
     """

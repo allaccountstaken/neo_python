@@ -66,7 +66,7 @@ class Query(object):
 
         return_object = Query.ReturnObjects.get(self.return_object)
 
-		filters = []
+        filters = []
 
         if self.filters:
             filter_options = Filter.create_filter_options(self.filters)
@@ -136,8 +136,18 @@ class Filter(object):
         :return: filtered list of Near Earth Object results
         """
         # TODO: Takes a list of NearEarthObjects and applies the value of its filter operation to the results
-        
-        
+
+        operation = Filter.Operators.get(self.operation)
+        field = Filter.Options.get(self.field)
+        outputs = []
+
+        for neo in results:
+            val = getattr(neo, field)
+            if operation(value, self.value):
+                outputs.append(neo)
+
+        return outputs
+
 
 class NEOSearcher(object):
     """

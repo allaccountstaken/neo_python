@@ -1,3 +1,6 @@
+
+from collections import defaultdict
+
 from models import OrbitPath, NearEarthObject
 
 
@@ -17,7 +20,7 @@ class NEODatabase(object):
         # TODO: What data structures will be needed to store the NearEarthObjects and OrbitPaths?
         # TODO: Add relevant instance variables for this.
         self.filename = filename
-        self.datepaths = {}
+        self.datepaths = defaultdict(set)
         self.neos = {}
 
     def load_data(self, filename=None):
@@ -75,22 +78,18 @@ class NEODatabase(object):
                 # Initialize Near Earth Object
                 neo = NearEarthObject(**neo_data)
 
+                # If NEO already registered in database update its orbits,
+                # Else register NEO in database
                 if name in self.neos:
-                    # If NEO already registered in database,
-                    # update its orbits
                     self.neos[name].update_orbits(orbit)
                 else:
-                    # If NEO not already registered in database,
-                    # add it to database
                     self.neos[name] = neo
 
-                if orbit_date in self.datepaths:
-                    # If orbit_date already registered in date database,
-                    # add NEO
-                    self.datepaths[orbit_date].add(neo)
-                else:
-                    # If orbit_date not already registered in database,
-                    # register it to database
-                    self.datepaths[orbit_date] = set([neo])             
+
+				# If orbit_date already registered in date database add NEO,
+				# else register new date with NEO. 
+                # NB: Using defaultdict
+                self.datepaths[orbit_date].add(neo)
+             
 
         return None

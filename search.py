@@ -62,7 +62,7 @@ class Query(object):
         if self.end_date:
             datesearch = Query.DateSearch(DateSearch.between, [self.start_date, self.end_date])
         else:
-            datesearch = Query.DateSearch(DateSearch.equals, [self.date])
+            datesearch = Query.DateSearch(DateSearch.equals, self.date)
 
         return_object = Query.ReturnObjects.get(self.return_object)
 
@@ -205,13 +205,12 @@ class NEOSearcher(object):
         # TODO: needs to support that then your filters can be applied to. Remember to return the number specified in
         # TODO: the Query.Selectors as well as in the return_type from Query.Selectors
 
-        query_date = query.date_search.values
         number = int(query.number)
 
         if query.date_search.type == DateSearch.equals:
-            orbits = self.equal_to_date([query.date_search.values], DateSearch.equals.value)
+            orbits = self.equal_to_date(query.date_search.values)
         elif query.date_search.type == DateSearch.between:
-            orbits = self.between_dates(query.date_search.values, DateSearch.between.value)
+            orbits = self.between_dates(query.date_search.values)
 
         if query.filters:
             if query.filters.get('OrbitPath'):
@@ -224,19 +223,21 @@ class NEOSearcher(object):
 
         if query.return_object == NearEarthObject:
             neos = [self.neos.get(orbit.neo_name) for orbit in orbits]
+            neos = list(set(neos))
             return neos[:number]
         elif query.return_object == OrbitPath:
             return list(orbits)[:number]
 
-    def equal_to_date(self, date_, number):
+    def equal_to_date(self, date_):
         orbits = set()
+        print(date_)
         for orbit in self.orbits:
             if orbit.close_approach_date==date_:
                 orbits.add(orbit)
 
         return orbits
 
-    def between_dates(self, dates, number):
+    def between_dates(self, dates):
         orbits = set()
         for orbit in self.orbits:
             if orbit.close_approach_date>=dates[0] and orbit.close_approach_date<=dates[1]:

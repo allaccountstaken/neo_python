@@ -70,3 +70,14 @@ https://github.com/ayivima/neo_python/commit/c7c834e7a65dcbde7f687e7fe41d9a4f70d
 + Refactored code to submit only unique NEOs.
 
 https://github.com/ayivima/neo_python/commit/1791e49999ddbb1e6adbb5077f1974760db4ea6e
+
+
+### TypeError: '>' not supported between instances of 'float' and 'str' in Test Cases
+
+###### Issue
+Values provided for some attributes in the test cases were given as float and boolean, while class attribute values were strings.
+
+###### Resolution
+Modified Constructor of NearEarthObject to cast class attribute values to appropriate types.
+
+https://github.com/ayivima/neo_python/commit/c623bc0c228e08ac71d5e4de382579f3cd43e3a8

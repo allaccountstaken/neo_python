@@ -51,9 +51,9 @@ https://github.com/ayivima/neo_python/commit/ca52eb4af3b87b1ea2ebfa00af90e2d4f17
 ### NEOSearcher.get_objects always returning None
 
 ###### Issue
-NEOSearcher.get_objects always returning None. I identified that the return object identifiers i provided were `NearEarthObject` and `OrbitPath` instead of `NEO` and `Path`.
+NEOSearcher.get_objects always returning None. I identified that the return object identifiers i provided were `NearEarthObject` and `OrbitPath`.
 
 ###### Resolution
-Changed return object identifiers from `NearEarthObject` and `OrbitPath`, to `NEO` and `Path`.
+Implemented checks for equality between `Query.return_object` and `NearEarthObject` and `OrbitPath` objects.
 
-https://github.com/ayivima/neo_python/commit/3888192434c6df9660ac46a71569e3457112c437
+https://github.com/ayivima/neo_python/commit/c7c834e7a65dcbde7f687e7fe41d9a4f70d16009

@@ -13,9 +13,10 @@ class NearEarthObject(object):
         self.id = kwargs.get("id")
         self.name = kwargs.get("name")
         self.orbits = kwargs.get("orbits")
-        self.diameter_min_km = kwargs.get("diameter_min_km")
-        self.is_potentially_hazardous_asteroid = kwargs.get("is_potentially_hazardous_asteroid")
-        
+        self.diameter_min_km = float(kwargs.get("diameter_min_km"))
+        self.is_potentially_hazardous_asteroid = (
+            True if kwargs.get("is_potentially_hazardous_asteroid").lower()=="true" else False
+        )
 
     def update_orbits(self, orbit):
         """
@@ -34,8 +35,9 @@ class NearEarthObject(object):
             "\nNEAR EARTH OBJECT:\n"
             "id: {}\n"
             "name: {}\n"
+            "minimum diameter(km): {}\n"
             "orbits: {}\n"
-        ).format(self.id, self.name, self.orbits)
+        ).format(self.id, self.name, self.diameter_min_km, self.orbits)
 
         return neo_info
 
@@ -53,14 +55,12 @@ class OrbitPath(object):
         """
         # TODO: What instance variables will be useful for storing on the Near Earth Object?
         self.neo_name = kwargs.get("neo_name")
-        self.miss_distance_kilometers = kwargs.get("miss_distance_kilometers")
+        self.miss_distance_kilometers = float(kwargs.get("miss_distance_kilometers"))
         self.close_approach_date = kwargs.get("close_approach_date")
  
     def __repr__(self):
         orbit_info = (
-            "\n\tOrbit("
-            "Miss Distance(km): {}, "
-            "Close Approach Date: {})"
+            "\n\tOrbit(Miss Distance(km): {}, Close Approach Date: {})"
         ).format(self.miss_distance_kilometers, self.close_approach_date)
 
         return orbit_info

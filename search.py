@@ -154,13 +154,13 @@ class Filter(object):
 
         return outputs
 
-    def apply_orbits_neo(self, orbits):
+    def apply_orbits_neo(self, orbits, neos):
         operation = Filter.Operators.get(self.operation)
         field = Filter.Options.get(self.field)
         outputs = set()
 
         for orbit in orbits:
-            neo = self.neos(orbit.neo_name)
+            neo = neos.get(orbit.neo_name)
             value = getattr(neo, field)
             if operation(value, self.value):
                 outputs.add(orbit)
@@ -215,12 +215,12 @@ class NEOSearcher(object):
 
         if query.filters:
             if query.filters.get('OrbitPath'):
-                for f in filter.get('OrbitPath'):
+                for f in query.filters.get('OrbitPath'):
                     orbits = f.apply(orbits)
 		
             if query.filters.get('NearEarthObject'):
-                for f in filter.get('NearEarthObject'):
-                    orbits = f.apply_orbits_neo(orbits)
+                for f in query.filters.get('NearEarthObject'):
+                    orbits = f.apply_orbits_neo(orbits, self.neos)
 
         if query.return_object == NearEarthObject:
             neos = set()

@@ -117,6 +117,11 @@ class Filter(object):
 
         for filter_option in filter_options:
             filter_name, operation, value = filter_option
+
+            if filter_name in ('distance', 'diameter'):
+                value = float(value)
+            elif filter_name == 'is_hazardous':
+                value = bool(value)
             
             if filter_name in ('is_hazardous', 'diameter'):
                 filter = Filter(filter_name, 'NearEarthObject', operation, value)
@@ -155,6 +160,14 @@ class Filter(object):
         return outputs
 
     def apply_orbits_neo(self, orbits, neos):
+        """
+        Function that applies the filter operation onto a set of orbits, 
+        based on their NEO attributes. 
+
+        :param orbits: List of Orbits
+        :param neos: List of NEOs
+        :return: filtered list of Orbits
+        """
         operation = Filter.Operators.get(self.operation)
         field = Filter.Options.get(self.field)
         outputs = set()
@@ -186,6 +199,7 @@ class NEOSearcher(object):
         self.datepaths = self.db.datepaths
         self.orbits = set()
 
+        # Extract all orbits from NEOs into a set of orbits
         for neo_name in self.db.neos:
             for orbit in self.db.neos.get(neo_name).orbits:
                 self.orbits.add(orbit)
@@ -212,7 +226,8 @@ class NEOSearcher(object):
             orbits = self.equal_to_date(query.date_search.values)
         elif query.date_search.type == DateSearch.between:
             orbits = self.between_dates(query.date_search.values)
-
+        
+        # Check if there are filters and apply them on the right objects
         if query.filters:
             if query.filters.get('OrbitPath'):
                 for f in query.filters.get('OrbitPath'):
@@ -222,6 +237,8 @@ class NEOSearcher(object):
                 for f in query.filters.get('NearEarthObject'):
                     orbits = f.apply_orbits_neo(orbits, self.neos)
 
+        # Return a list of NEOs of specified length
+        # if return_object is NearEarthObject
         if query.return_object == NearEarthObject:
             neos = set()
             for orbit in orbits:
@@ -231,10 +248,18 @@ class NEOSearcher(object):
 
             return neos
 
+        # Return a list of orbits of specified length
+        # if return_object is OrbitPath
         elif query.return_object == OrbitPath:
             return random.sample(orbits, number)
 
     def equal_to_date(self, date_):
+        """Filters orbits with which have a specified approach date.
+
+        :param date_: Specified date which orbits are filtered by
+        :return: filtered list of orbits which have same close 
+                 approach date as specified date.
+        """
         orbits = set()
 
         for orbit in self.orbits:
@@ -244,6 +269,14 @@ class NEOSearcher(object):
         return orbits
 
     def between_dates(self, dates):
+        """Filters orbits with which have close approach dates 
+        falling within specified date range.
+
+        :param dates: Specified start and end dates representing 
+                      the range which orbits are filtered by
+        :return: filtered list of orbits which have same close 
+                 approach dates falling within specified date range.
+        """
         orbits = set()
 
         for orbit in self.orbits:

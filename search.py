@@ -124,6 +124,13 @@ class Filter(object):
                 filter = Filter(filter_name, 'OrbitPath', operation, value)
                 filter_dict['OrbitPath'].append(filter)
 
+        if not 'OrbitPath' in filter_dict:
+            filter_dict['OrbitPath'] = []
+
+        if not 'NearEarthObject' in filter_dict:
+            filter_dict['NearEarthObject'] = []
+		
+        print(filter_dict)
         return filter_dict
 
     def apply(self, results):
@@ -137,12 +144,12 @@ class Filter(object):
         # TODO: Takes a list of NearEarthObjects and applies the value of its filter operation to the results
         operation = Filter.Operators.get(self.operation)
         field = Filter.Options.get(self.field)
-        outputs = []
+        outputs = set()
 
         for neo in results:
             value = getattr(neo, field)
             if operation(value, self.value):
-                outputs.append(neo)
+                outputs.add(neo)
 
         return outputs
 
@@ -206,13 +213,14 @@ class NEOSearcher(object):
         elif query.date_search.type == DateSearch.between:
             orbits = self.between_dates(query.date_search.values, DateSearch.between.value)
 
-        if query.filters.get('OrbitPath'):
-            for f in filter.get('OrbitPath'):
-                orbits = f.apply(orbits)
+        if query.filters:
+            if query.filters.get('OrbitPath'):
+                for f in filter.get('OrbitPath'):
+                    orbits = f.apply(orbits)
 		
-        if query.filters.get('NearEarthObject'):
-            for f in filter.get('NearEarthObject'):
-                orbits = f.apply_orbits_neo(orbits)
+            if query.filters.get('NearEarthObject'):
+                for f in filter.get('NearEarthObject'):
+                    orbits = f.apply_orbits_neo(orbits)
 
         if query.return_object == 'NearEarthObject':
             neos = [self.neos.get(orbit.neo_name) for orbit in orbits]

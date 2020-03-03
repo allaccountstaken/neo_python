@@ -130,7 +130,7 @@ class Filter(object):
         if not 'NearEarthObject' in filter_dict:
             filter_dict['NearEarthObject'] = []
 		
-        print(filter_dict)
+        #print(filter_dict)
         return filter_dict
 
     def apply(self, results):
@@ -222,10 +222,10 @@ class NEOSearcher(object):
                 for f in filter.get('NearEarthObject'):
                     orbits = f.apply_orbits_neo(orbits)
 
-        if query.return_object == 'NEO':
+        if query.return_object == NearEarthObject:
             neos = [self.neos.get(orbit.neo_name) for orbit in orbits]
             return neos[:number]
-        elif query.return_object == 'Path':
+        elif query.return_object == OrbitPath:
             return list(orbits)[:number]
 
     def equal_to_date(self, date_, number):

@@ -223,9 +223,6 @@ class NEOSearcher(object):
                     orbits = f.apply_orbits_neo(orbits)
 
         if query.return_object == NearEarthObject:
-            # neos = [self.neos.get(orbit.neo_name) for orbit in orbits]
-            # neos = list(set(neos))
-            # return neos[:number]
             neos = set()
             for orbit in orbits:
                 neos.add(self.neos.get(orbit.neo_name))

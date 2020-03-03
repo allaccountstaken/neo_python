@@ -24,6 +24,19 @@ I had set the `filter` instance variable to reference the `return_object` argume
 I changed it to reference the `filter` argument from `kwargs`. https://github.com/ayivima/neo_python/commit/4c2bedccc88e67f1d5d6baf3c279ae0584011d99
 
 
+### Error in accessing Filters from Query
+
+###### Issue
+Error message was that `query.filters` had no method get, even though it is supposed to be a `defaultdict`.
+
+###### Resolution
++ Checked whether `Query.filters` was empty, in which case it contained an empty set. If it was empty there wouldn't be an attempt to get filters.
+
++ In `Filter.create_filter_options`, if a NearEarthObject or OrbitPath didn't have filters, the respective keys would contain an empty list. 
+
+https://github.com/ayivima/neo_python/commit/ca52eb4af3b87b1ea2ebfa00af90e2d4f17a46bc
+
+
 ### Unbound Local Error
 
 ###### Issue: 

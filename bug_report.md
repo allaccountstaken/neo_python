@@ -22,3 +22,14 @@ Testing my `Query.build_query` returned an object with no filters even though fi
 
 I had set the `filter` instance variable to reference the `return_object` argument from `kwargs`. 
 I changed it to reference the `filter` argument from `kwargs`. https://github.com/ayivima/neo_python/commit/4c2bedccc88e67f1d5d6baf3c279ae0584011d99
+
+
+### Unbound Local Error
+
+###### Issue: 
+
+There was an error which referred to using filter_dict before it had been assigned. 
+
+###### Resolution:
+
+This was a bit strange. But I resolved it by initially assigning `filter_dict` to an empty set before assigning it to the output of `Filter.create_filter_options`. https://github.com/ayivima/neo_python/commit/42618a6dcbb736f504b98656ccb92f8a5e5fa7e8

@@ -57,3 +57,16 @@ NEOSearcher.get_objects always returning None. I identified that the return obje
 Implemented checks for equality between `Query.return_object` and `NearEarthObject` and `OrbitPath` objects.
 
 https://github.com/ayivima/neo_python/commit/c7c834e7a65dcbde7f687e7fe41d9a4f70d16009
+
+
+### `test_find_unique_number_neos_on_date` failing
+
+###### Issue
++ `self.assertEqual(len(results), 10)` was initially failing as `len(results)` was returning `0`
++ After solving for above, `self.assertEqual(len(neo_ids), 10)` was failing too, as `len(neo_ids)` was returning `6` instead of `10`.
+
+###### Resolution
++ Fixed method for performing equality DateSearch 
++ Refactored code to submit only unique NEOs.
+
+https://github.com/ayivima/neo_python/commit/c7c834e7a65dcbde7f687e7fe41d9a4f70d16009

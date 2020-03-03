@@ -1,6 +1,7 @@
-from operator import eq, gt
 from collections import namedtuple, defaultdict
 from enum import Enum
+from operator import eq, gt
+import random
 
 from exceptions import UnsupportedFeature
 from models import NearEarthObject, OrbitPath
@@ -222,15 +223,23 @@ class NEOSearcher(object):
                     orbits = f.apply_orbits_neo(orbits)
 
         if query.return_object == NearEarthObject:
-            neos = [self.neos.get(orbit.neo_name) for orbit in orbits]
-            neos = list(set(neos))
-            return neos[:number]
+            # neos = [self.neos.get(orbit.neo_name) for orbit in orbits]
+            # neos = list(set(neos))
+            # return neos[:number]
+            neos = set()
+            for orbit in orbits:
+                neos.add(self.neos.get(orbit.neo_name))
+                if len(neos)>=number:
+                    break
+
+            return neos
+
         elif query.return_object == OrbitPath:
-            return list(orbits)[:number]
+            return random.sample(orbits, number)
 
     def equal_to_date(self, date_):
         orbits = set()
-        print(date_)
+
         for orbit in self.orbits:
             if orbit.close_approach_date==date_:
                 orbits.add(orbit)
@@ -239,6 +248,7 @@ class NEOSearcher(object):
 
     def between_dates(self, dates):
         orbits = set()
+
         for orbit in self.orbits:
             if orbit.close_approach_date>=dates[0] and orbit.close_approach_date<=dates[1]:
                 orbits.add(orbit)

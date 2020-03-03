@@ -69,4 +69,4 @@ https://github.com/ayivima/neo_python/commit/c7c834e7a65dcbde7f687e7fe41d9a4f70d
 + Fixed method for performing equality DateSearch 
 + Refactored code to submit only unique NEOs.
 
-https://github.com/ayivima/neo_python/commit/c7c834e7a65dcbde7f687e7fe41d9a4f70d16009
+https://github.com/ayivima/neo_python/commit/1791e49999ddbb1e6adbb5077f1974760db4ea6e

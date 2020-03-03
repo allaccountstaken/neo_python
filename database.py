@@ -86,8 +86,8 @@ class NEODatabase(object):
                     self.neos[name] = neo
 
 
-				# If orbit_date already registered in date database add NEO,
-				# else register new date with NEO. 
+                # If orbit_date already registered in date database add NEO,
+                # else register new date with NEO. 
                 # NB: Using defaultdict
                 self.datepaths[orbit_date].add(neo)
              

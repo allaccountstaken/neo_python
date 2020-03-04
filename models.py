@@ -45,7 +45,9 @@ class NearEarthObject(object):
             self.id,
             self.name,
             self.diameter_min_km,
-            "\n\t\t".join([orbit._repr_cust() for orbit in self.orbits])
+            "\n\t\t".join(
+                sorted([orbit._repr_cust() for orbit in self.orbits], reverse=True)
+            )
         )
 
         return neo_info
@@ -91,4 +93,5 @@ class OrbitPath(object):
             "{} (Miss Distance in km: {})"
         ).format(self.close_approach_date, self.miss_distance_kilometers)
 
-        return orbit_info 
+        return orbit_info
+ 

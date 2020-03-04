@@ -38,26 +38,27 @@ class NEOWriter(object):
 
             if data_type == NearEarthObject:
                 f.write("id,name,minimum_diameter_in_km,orbits\n")
-            elif data_type == OrbitPath:
-                f.write("neo_name,close_approach_date,miss_distance_kilometers\n")
 
-            for datum in data:
-
-                if isinstance(datum, NearEarthObject):
+                for datum in data:
                     out = "{},{},{},{}\n".format(
                         datum.id,
                         datum.name,
                         datum.diameter_min_km,
                         ";".join([orbit._repr_cust() for orbit in datum.orbits])
                     )
-                elif isinstance(datum, OrbitPath):
+                    f.write(out)
+
+            elif data_type == OrbitPath:
+                f.write("neo_name,close_approach_date,miss_distance_kilometers\n")
+
+                for datum in data:
                     out = "{},{},{}\n".format(
                         datum.neo_name,
                         datum.close_approach_date,
                         datum.miss_distance_kilometers
                     )
+                    f.write(out)
 
-                f.write(out)
 
         return True
 

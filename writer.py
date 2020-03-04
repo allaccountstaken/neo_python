@@ -36,6 +36,7 @@ class NEOWriter(object):
 
         with open(csv_file, 'w') as f:
 
+            # Customize outputs differently for NearEarthObjects and OrbitPaths
             if data_type == NearEarthObject:
                 f.write("id,name,minimum_diameter_in_km,orbits\n")
 
@@ -70,8 +71,11 @@ class NEOWriter(object):
             return False
 
         for index, datum in enumerate(data):
-            print("- {} ----------------".format(index+1))
+            index += 1
+            print("- {} ----------------".format(index))
             print(datum)
+            if index % 3 == 0:
+                input("Press key to continue...")
 
         return True
 

@@ -49,7 +49,7 @@ class NEODatabase(object):
                 # Mapped names to feature indices for readability
                 id, name, diameter_min_km, ishazardous, orbit_date, miss_distance = (
                     feature[0],
-                    feature[2][1:-1],
+                    feature[2],
                     feature[5],
                     feature[13],
                     feature[17],

@@ -103,3 +103,50 @@ Operation had a `None` value, because provision hadn't been made for the greater
 Implemented a fix by adding `>=`, `<=` and `<` operators.
 https://github.com/ayivima/neo_python/commit/a0cdcafacb382dfb683c9cb907b01b2eebf5ab97
 
+
+### Wrongly selecting NEOs with that are Hazardous when query expects NEOs that are not hazardous
+
+```
+D:\nd303c1\starter>main.py display -n 10 --start_date 2020-01-01 --end_date 2020-01-10 --filter "is_hazardous:=:False" "diameter:>:0.02" "distance:>=:50000"
+- 1 ----------------
+
+NearEarthObject 506491 (2003 UW29) -> [
+        ID: 2506491
+        Name: 506491 (2003 UW29)
+        Min. Diameter(km): 0.2016299194
+        Hazardous: True
+        Orbits:
+                2020-01-02 (Miss Distance in km: 37817885.8309684)
+]
+
+- 2 ----------------
+
+NearEarthObject (2007 JH22) -> [
+        ID: 3376346
+        Name: (2007 JH22)
+        Min. Diameter(km): 0.1214940408
+        Hazardous: True
+        Orbits:
+                2020-01-10 (Miss Distance in km: 32678672.023011543)
+]
+
+- 3 ----------------
+
+NearEarthObject (2019 WD5) -> [
+        ID: 3893736
+        Name: (2019 WD5)
+        Min. Diameter(km): 0.1160259082
+        Hazardous: True
+        Orbits:
+                2020-01-06 (Miss Distance in km: 8905752.461976795)
+]
+
+Press key to continue...
+```
+
+###### Issue
+Was casting the string value of whether an NEO was hazardous directly to boolean. It always returned True, for both "True" and "False"
+
+###### Resolution
+Changed implementation to use an unary operator to manually translate string values of "True" and "False" to boolean.
+https://github.com/ayivima/neo_python/commit/2dd3bde4794c7c703af89941283fe4f827d432fc

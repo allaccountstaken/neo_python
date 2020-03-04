@@ -7,7 +7,7 @@ class NearEarthObject(object):
 
     def __init__(self, **kwargs):
         """
-        :param kwargs:    dict of attributes about a given Near Earth Object, only a subset of attributes used
+        :param kwargs: dict of attributes about a given Near Earth Object, only a subset of attributes used
         """
         # TODO: What instance variables will be useful for storing on the Near Earth Object?
         self.id = kwargs.get("id")
@@ -31,13 +31,22 @@ class NearEarthObject(object):
         self.orbits.add(orbit)
 
     def __repr__(self):
+        """Implements a text representation of a Near Earth Object"""
+
         neo_info = (
-            "\nNEAR EARTH OBJECT:\n"
-            "id: {}\n"
-            "name: {}\n"
-            "minimum diameter(km): {}\n"
-            "orbits: {}\n"
-        ).format(self.id, self.name, self.diameter_min_km, self.orbits)
+            "\nNearEarthObject {} -> [\n"
+            "\tID: {}\n"
+            "\tName: {}\n"
+            "\tMin. Diameter(km): {}\n"
+            "\tOrbits: \n\t\t{}\n"
+            "]\n"
+        ).format(
+            self.name,
+            self.id,
+            self.name,
+            self.diameter_min_km,
+            "\n\t\t".join([orbit._repr_cust() for orbit in self.orbits])
+        )
 
         return neo_info
 
@@ -57,10 +66,29 @@ class OrbitPath(object):
         self.neo_name = kwargs.get("neo_name")
         self.miss_distance_kilometers = float(kwargs.get("miss_distance_kilometers"))
         self.close_approach_date = kwargs.get("close_approach_date")
- 
+
     def __repr__(self):
+        """Implements a text representation of an Orbit"""
         orbit_info = (
-            "\n\tOrbit(Miss Distance(km): {}, Close Approach Date: {})"
-        ).format(self.miss_distance_kilometers, self.close_approach_date)
+            "Orbit -> [\n"
+            "\tNEO: {}\n"
+            "\tClose Approach Date: {}\n"
+            "\tMiss Distance(km): {}\n"
+            "]"
+        ).format(
+            self.neo_name,
+            self.close_approach_date,
+            self.miss_distance_kilometers
+        )
 
         return orbit_info
+
+    def _repr_cust(self):
+        """Implements a text representation of an Orbit for use 
+        in representation of a Near Earth Object"""
+
+        orbit_info = (
+            "{} (Miss Distance in km: {})"
+        ).format(self.close_approach_date, self.miss_distance_kilometers)
+
+        return orbit_info 

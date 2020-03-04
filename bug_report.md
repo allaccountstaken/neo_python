@@ -81,3 +81,25 @@ Values provided for some attributes in the test cases were given as float and bo
 Modified Constructor of NearEarthObject to cast class attribute values to appropriate types.
 
 https://github.com/ayivima/neo_python/commit/c623bc0c228e08ac71d5e4de382579f3cd43e3a8
+
+
+### TypeError: 'NoneType' object is not callable
+```
+D:\nd303c1\starter>main.py csv_file -n 10 --start_date 2020-01-01 --end_date 2020-01-10 --filter "is_hazardous:=:False" "diameter:>:0.02" "distance:>=:50000"
+Traceback (most recent call last):
+  File "D:\nd303c1\starter\main.py", line 121, in <module>
+    results = NEOSearcher(db).get_objects(query_selectors)
+  File "D:\nd303c1\starter\search.py", line 249, in get_objects
+    orbits = f.apply(orbits)
+  File "D:\nd303c1\starter\search.py", line 172, in apply
+    if operation(value, self.value):
+TypeError: 'NoneType' object is not callable
+```
+  
+###### Issue
+Operation had a `None` value, because provision hadn't been made for the greater than or equal to operators.
+
+###### Resolution
+Implemented a fix by adding `>=`, `<=` and `<` operators.
+https://github.com/ayivima/neo_python/commit/a0cdcafacb382dfb683c9cb907b01b2eebf5ab97
+

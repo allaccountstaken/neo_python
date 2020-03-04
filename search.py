@@ -135,7 +135,7 @@ class Filter(object):
             if filter_name in ('distance', 'diameter'):
                 value = float(value)
             elif filter_name == 'is_hazardous':
-                value = bool(value)
+                value = True if value=="True" else False
             
             if filter_name in ('is_hazardous', 'diameter'):
                 filter = Filter(filter_name, 'NearEarthObject', operation, value)

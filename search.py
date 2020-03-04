@@ -1,6 +1,6 @@
 from collections import namedtuple, defaultdict
 from enum import Enum
-from operator import eq, gt
+from operator import eq, gt, ge, lt, le
 import random
 
 from exceptions import UnsupportedFeature
@@ -99,7 +99,10 @@ class Filter(object):
     Operators = {
         # TODO: Create a dict of operator symbol to an Operators method, see README Task 3 for hint
         '=': eq, 
-        '>': gt
+        '>': gt,
+        '>=': ge, 
+        '<': lt,
+        '<=': le,
     }
 
     def __init__(self, field, object, operation, value):
@@ -164,6 +167,7 @@ class Filter(object):
 
         for neo in results:
             value = getattr(neo, field)
+
             if operation(value, self.value):
                 outputs.add(neo)
 

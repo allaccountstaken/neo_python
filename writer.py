@@ -1,4 +1,7 @@
 from enum import Enum
+import random
+
+from models import NearEarthObject, OrbitPath
 
 
 class OutputFormat(Enum):
@@ -25,7 +28,53 @@ class NEOWriter(object):
         # TODO: How can we use the OutputFormat in the NEOWriter?
         pass
 
-    def write(self, format, data, **kwargs):
+    def print_to_file(self, data, csv_file, data_type):
+        """Writes data to a csv file"""
+
+        # check for empty data
+        if not data: return False
+
+        with open(csv_file, 'w') as f:
+
+            if data_type == NearEarthObject:
+                f.write("id,name,minimum_diameter_in_km,orbits\n")
+            elif data_type == OrbitPath:
+                f.write("neo_name,close_approach_date,miss_distance_kilometers\n")
+
+            for datum in data:
+
+                if isinstance(datum, NearEarthObject):
+                    out = "{},{},{},{}\n".format(
+                        datum.id,
+                        datum.name,
+                        datum.diameter_min_km,
+                        ";".join([orbit._repr_cust() for orbit in datum.orbits])
+                    )
+                elif isinstance(datum, OrbitPath):
+                    out = "{},{},{}\n".format(
+                        datum.neo_name,
+                        datum.close_approach_date,
+                        datum.miss_distance_kilometers
+                    )
+
+                f.write(out)
+
+        return True
+
+    def print_to_terminal(self, data):
+        """Prints data to the terminal"""
+
+        if not data: 
+            print("No data to print.")
+            return False
+
+        for index, datum in enumerate(data):
+            print("- {} ----------------".format(index+1))
+            print(datum)
+
+        return True
+
+    def write(self, format, data, return_object, **kwargs):
         """
         Generic write interface that, depending on the OutputFormat selected calls the
         appropriate instance write function
@@ -38,3 +87,8 @@ class NEOWriter(object):
         # TODO: Using the OutputFormat, how can we organize our 'write' logic for output to stdout vs to csvfile
         # TODO: into instance methods for NEOWriter? Write instance methods that write() can call to do the necessary
         # TODO: output format.
+
+        if format==OutputFormat.display.value:
+            return self.print_to_terminal(data)
+        elif format==OutputFormat.csv_file.value:
+            return self.print_to_file(data, 'output.csv', return_object)

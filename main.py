@@ -3,22 +3,28 @@
 
 """
 Script to run the Near Earth Object database.
+
 You can run from the commandline with: main.py [args]
 Example: main.py display -n 10 -d 2020-01-10
+
 Search options:
 - Find N NEOs by date e.g. main.py display --return NEO -n 10 -d 2020-01-10
 - Find N NEOs between start_date and end_date  e.g. main.py display --return NEO -n 10 --start_date 2020-01-01 --end_date 2020-01-10
 - Find N NEOs between start_date and end_date with filters and output to csvfile with name 'neo_neo_data' e.g. csvfile -n 10 -f new_neo_data --start_date 2020-01-01 --end_date 2020-01-10 --filter "is_hazardous:=:False" "diameter:>:0.02" "distance:>=:50000
+
 Output options: Required.
 - display: prints to stdout
 - csv_file: exports data to a csv
+
 Filters options: Optional. Input as: option:operation:value e.g. diameter:>=:0.042
 - is_hazardous:[=]:bool
 - diameter:[>=|=|<=]:float
 - distance:[>=|=|<=]:float
+
 Return objects options: Optional, defaults to NEO if not specified.
 - NEO
 - Path
+
 Filename: Optional, used for specifying a filename for a csv to load data from. By default project looks for a csv in: data/neo_data.csv.
 """
 
@@ -38,6 +44,7 @@ PROJECT_ROOT = pathlib.Path(__file__).parent.absolute()
 def verify_date(datetime_str):
     """
     Function that verifies datetime strings in YYYY-MM-DD format are valid dates.
+
     :param datetime_str:    String representing datetime in %Y-%m-%d format
     :return: str:           String representing datetime in %Y-%m-%d format
     """
@@ -52,6 +59,7 @@ def verify_date(datetime_str):
 def verify_output_choice(choice):
     """
     Function that verifies output choice is a supported OutputFormat.
+
     :param choice:    String representing an OutputFormat
     :return: str:     String representing an OutputFormat
     """
@@ -120,7 +128,9 @@ if __name__ == '__main__':
         result = NEOWriter().write(
             data=results,
             format=args.output,
+            return_object=query_selectors.return_object
         )
+
     except Exception as e:
         print(e)
         print('Write unsuccessful')
@@ -130,3 +140,4 @@ if __name__ == '__main__':
         print('Write successful.')
     else:
         print('Write unsuccessful.')
+

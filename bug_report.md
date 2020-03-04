@@ -1,4 +1,4 @@
-# BUG FIXES
+# BUG REPORT
 
 ### Error with NEO and OrbitPath attributes
 

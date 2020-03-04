@@ -42,7 +42,9 @@ class NEODatabase(object):
         # TODO: Where will the data be stored?
         with open(filename, "r") as f:
             # store all lines except header
-            features = [feature.split(",") for feature in f.readlines()[1:]]
+            features = [
+                feature.split(",") for feature in f.readlines()[1:] if feature
+            ]
 
             for feature in features:
                 # Get relevant NEO information

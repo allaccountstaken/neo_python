@@ -28,7 +28,10 @@ class Query(object):
     to structure the query information into a format the NEOSearcher can use for date search.
     """
 
-    Selectors = namedtuple('Selectors', ['date_search', 'number', 'filters', 'return_object'])
+    Selectors = namedtuple(
+        'Selectors',
+        ['date_search', 'number', 'filters', 'return_object']
+    )
     DateSearch = namedtuple('DateSearch', ['type', 'values'])
     ReturnObjects = {'NEO': NearEarthObject, 'Path': OrbitPath}
 
@@ -61,7 +64,10 @@ class Query(object):
         # TODO: Translate the query parameters into a QueryBuild.Selectors object
         # Assess type of date search by the presence or absence of end_date attribute
         if self.end_date:
-            datesearch = Query.DateSearch(DateSearch.between, [self.start_date, self.end_date])
+            datesearch = Query.DateSearch(
+                DateSearch.between, 
+                [self.start_date, self.end_date]
+            )
         else:
             datesearch = Query.DateSearch(DateSearch.equals, self.date)
 
@@ -71,7 +77,12 @@ class Query(object):
         if self.filters:
             filter_dict = Filter.create_filter_options(self.filters)
 
-        return Query.Selectors(datesearch, self.number, filter_dict, return_object)
+        return Query.Selectors(
+            datesearch,
+            self.number, 
+            filter_dict,
+            return_object
+        )
 
 class Filter(object):
     """
@@ -135,8 +146,7 @@ class Filter(object):
 
         if not 'NearEarthObject' in filter_dict:
             filter_dict['NearEarthObject'] = []
-		
-        #print(filter_dict)
+
         return filter_dict
 
     def apply(self, results):
@@ -280,7 +290,10 @@ class NEOSearcher(object):
         orbits = set()
 
         for orbit in self.orbits:
-            if orbit.close_approach_date>=dates[0] and orbit.close_approach_date<=dates[1]:
+            if (
+                orbit.close_approach_date>=dates[0] and
+                orbit.close_approach_date<=dates[1]
+            ):
                 orbits.add(orbit)
 
         return orbits

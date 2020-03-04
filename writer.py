@@ -75,7 +75,7 @@ class NEOWriter(object):
             print("- {} ----------------".format(index))
             print(datum)
             if index % 3 == 0:
-                input("Press key to continue...")
+                input("Press Enter to continue...")
 
         return True
 
